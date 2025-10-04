@@ -142,6 +142,7 @@
     </div>
   </header>
 
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-inner" id="heroInner">
       <div>
@@ -165,7 +166,7 @@
 
   <main class="wrap grid">
     <section>
-      <!-- DIAGNÓSTICO SIMPLE -->
+      <!-- DIAGNÓSTICO SIMPLE (predeterminado) -->
       <article id="route-diagnostico" class="card reveal" aria-labelledby="tit-dx">
         <h2 id="tit-dx">Diagnóstico rápido según tu síntoma</h2>
         <p class="intro">Selecciona tu <strong>síntoma</strong>, el <strong>tipo de unidad</strong> y el <strong>año</strong>. Te mostraremos posibles causas y el servicio sugerido. <em>Este resultado es orientativo: lo ideal es llevar la unidad a revisión.</em></p>
@@ -328,6 +329,7 @@
     </section>
   </main>
 
+  <!-- WhatsApp FAB -->
   <a class="wa-fab" id="waFab"
      href="https://wa.me/525575154446?text=Hola%20LAGGER%2C%20vengo%20de%20la%20web.%20Quiero%20informes%20y%20agendar%20cita."
      target="_blank" rel="noopener">
@@ -415,16 +417,14 @@
       if(hash==='#/agendar'){ $('#route-agendar').classList.remove('hidden'); $$('.tab')[1].setAttribute('aria-current','page'); }
       if(hash==='#/faq'){ $('#route-faq').classList.remove('hidden'); $$('.tab')[2].setAttribute('aria-current','page'); }
       if(hash==='#/nosotros'){ $('#route-nosotros').classList.remove('hidden'); $$('.tab')[3].setAttribute('aria-current','page'); }
-      renderHero(hash);
-      location.hash = hash;
+      renderHero(hash); location.hash = hash;
     }
     $$('.tab').forEach(btn=>btn.addEventListener('click',()=>setRoute(btn.dataset.route)));
     window.addEventListener('hashchange',()=>setRoute(location.hash));
-
     $('#ctaDx')?.addEventListener('click',()=>setRoute('#/diagnostico'));
     $('#ctaAg')?.addEventListener('click',()=>setRoute('#/agendar'));
 
-    /* ===== Diagnóstico estático (sin API) ===== */
+    /* ===== Diagnóstico estático ===== */
     const BASE_DIAG = {
       "Ruido al frenar": { servicio:"Revisión de frenos", causas:["Balatas desgastadas o cristalizadas","Discos/tambores rayados","Polvo o cuerpos extraños"], tiempo:[1,2], costo:[1200,3200] },
       "Vibración al frenar": { servicio:"Rectificado/ajuste de frenos", causas:["Discos/tambores alabeados","Bujes flojos o desbalanceo","Pernos de mordaza con juego"], tiempo:[1,3], costo:[1500,4200] },
@@ -434,7 +434,7 @@
       "Dificultad para meter velocidades": { servicio:"Ajuste y diagnóstico de embrague/transmisión", causas:["Ajuste de varillaje","Desgaste de embrague","Problema hidráulico"], tiempo:[2,4], costo:[2200,6500] }
     };
     const UNIT_MULT = { "Tráiler":1.8, "Camión":1.4, "Auto":1.0 };
-    function fmtMoney(n){ return n.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}) }
+    const fmtMoney = n => n.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
 
     document.getElementById('form-dx').addEventListener('submit',(e)=>{
       e.preventDefault();
@@ -467,7 +467,6 @@
       $('#agendarFromDx')?.addEventListener('click',()=>setRoute('#/agendar'));
       toast('Diagnóstico generado.');
     });
-
     document.getElementById('dxClear')?.addEventListener('click',()=>{ $('#dx-result').classList.add('hidden'); $('#dx-result').innerHTML=''; });
 
     /* ===== Agendar → Google Sheets (Apps Script) ===== */
@@ -490,12 +489,18 @@
       }
       const btn=$('#form-ag button[type="submit"]'); btn.disabled=true; btn.textContent='Confirmando…';
       try{
-        const res=await fetch(API, { // ← directo a /exec
+        const res=await fetch(API, {
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify(payload)
         });
-        const j=await res.json();
+        const text = await res.text();
+        let j; try{ j=JSON.parse(text); }catch{ j={ ok:false, error:'Respuesta no JSON', raw:text }; }
+        if(!j.ok){
+          console.error('Server error:', j);
+          toast('No se pudo crear la cita: ' + (j.error || 'Intenta de nuevo'));
+          return;
+        }
         const $r=$('#ag-result');
         $r.innerHTML=`<div class="status ok">Cita registrada</div>
           <p class="muted">ID: <strong>${j.eventId || '(pendiente)'}</strong></p>
@@ -507,8 +512,12 @@
           navigator.clipboard.writeText(txt); toast('Copiado ✅'); 
         });
         toast('Cita creada con éxito.');
-      }catch(err){ console.error(err); toast('No se pudo crear la cita.'); }
-      finally{ btn.disabled=false; btn.textContent='Confirmar cita'; }
+      }catch(err){
+        console.error(err);
+        toast('No se pudo crear la cita. Revisa consola para detalle.');
+      }finally{
+        btn.disabled=false; btn.textContent='Confirmar cita';
+      }
     });
 
     $('#btnToDx')?.addEventListener('click',()=>setRoute('#/diagnostico'));
@@ -523,6 +532,7 @@
   </script>
 </body>
 </html>
+
 
 
 
