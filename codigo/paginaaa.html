@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LAGGER — Especialistas en Clutch y Frenos</title>
-  <meta name="description" content="App de una sola página para LAGGER: diagnóstico con IA, agendar citas y presentación del taller. Diseño llamativo con microinteracciones (HTML+CSS+JS)." />
+  <meta name="description" content="App de una sola página para LAGGER: diagnóstico rápido, preguntas frecuentes y presentación del taller. Diseño llamativo con microinteracciones (HTML+CSS+JS)." />
   <style>
     :root{
       --bg:#0b0e13;
@@ -39,11 +39,8 @@
     .wrap{max-width:1200px; margin:0 auto; padding:14px 18px; position:relative; z-index:1}
 
     .brand{display:flex; align-items:center; gap:12px}
-    /* FIX: bloque correcto del logo */
+    /* LOGO (corregido, sin HTML incrustado en CSS) */
     .logo-img{
-      <img class="logo-img"
-     src="https://arilaguna.github.io/lagger-web/assets/img/logo-lagger.png"
-     alt="LAGGER logo" loading="lazy">
       width:46px; height:46px; object-fit:contain;
       border-radius:10px; background:#0f141f;
       border:1px solid rgba(255,255,255,.08);
@@ -75,10 +72,9 @@
       radial-gradient(45% 55% at 70% 65%, #5fd3f326, transparent 70%);} 
     .hero-ill img{width:100%; height:100%; object-fit:cover; opacity:.9}
 
-    /* Layout principal */
+    /* Layout principal: una sola columna (eliminamos aside) */
     main{padding: 10px 18px 24px}
-    .grid{display:grid; gap:var(--gap)}
-    @media(min-width:980px){.grid{grid-template-columns: 1.2fr .8fr}}
+    .grid{display:grid; gap:var(--gap); grid-template-columns:1fr}
 
     /* Cards */
     .card{position:relative; background:var(--panel); border-radius:var(--radius); box-shadow:0 14px 40px var(--shadow)}
@@ -93,8 +89,7 @@
     .row{display:flex; gap:12px; flex-wrap:wrap}
     .row .field{flex:1 1 220px}
     label{display:block; font-weight:700; font-size:14px; margin-bottom:6px}
-    input, select, textarea{width:100%; background:var(--panel-2); border:1px solid rgba(255,255,255,.08); color:var(--text); padding:10px 12px; border-radius:12px; outline:none}
-    textarea{min-height:92px; resize:vertical}
+    input, select{width:100%; background:var(--panel-2); border:1px solid rgba(255,255,255,.08); color:var(--text); padding:10px 12px; border-radius:12px; outline:none}
     .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
     .btn.alt{background:var(--accent); color:#071018}
 
@@ -106,17 +101,18 @@
     .warn{background:rgba(243, 156, 18,.15); color:#f8d6a8}
     .err{background:rgba(231, 76, 60,.15); color:#f7b0a6}
 
-    aside .card ul{list-style:none; padding-left:0}
-    aside .card li{margin:6px 0}
+    .gallery{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px}
+    .gallery img{width:100%; height:100%; object-fit:cover; border-radius:12px; aspect-ratio:16/10; background:#0c1119; border:1px solid rgba(255,255,255,.06)}
+    @media(max-width:820px){.gallery{grid-template-columns:1fr 1fr}}
 
-    .ribbon{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0 6px}
-    .chip{background:linear-gradient(180deg,#121723,#0d121b); border:1px solid rgba(255,255,255,.08); padding:10px 12px; border-radius:999px; text-align:center; font-weight:700; color:#e6ecf7}
-    .chip small{display:block; color:var(--muted); font-weight:600}
-    @media(max-width:680px){.ribbon{grid-template-columns:1fr}}
-
-    footer{padding:22px 18px; border-top:1px solid rgba(255,255,255,.06); color:var(--muted)}
-    small code{opacity:.8}
-
+    /* FAQ acordeón */
+    details{background:var(--panel-2); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:10px 12px}
+    details+details{margin-top:10px}
+    details summary{cursor:pointer; font-weight:800; outline:none}
+    details p{color:var(--muted); margin:.5rem 0 0}
+    details ul{margin:.5rem 0 0; color:var(--muted)}
+    iframe.map{width:100%; height:320px; border:0; border-radius:12px; filter:grayscale(.2) contrast(1.05) saturate(.9)}
+    
     /* WhatsApp FAB */
     .wa-fab{
       position:fixed; right:14px; bottom:14px; z-index:80;
@@ -132,10 +128,6 @@
 
     .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s ease, transform .35s ease}
     .reveal.show{opacity:1; transform:none}
-
-    .gallery{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px}
-    .gallery img{width:100%; height:100%; object-fit:cover; border-radius:12px; aspect-ratio:16/10; background:#0c1119; border:1px solid rgba(255,255,255,.06)}
-    @media(max-width:820px){.gallery{grid-template-columns:1fr 1fr}}
   </style>
 </head>
 <body>
@@ -159,7 +151,6 @@
   <!-- HERO dinámico -->
   <section class="hero">
     <div class="hero-inner" id="heroInner">
-      <!-- Se llena dinámicamente según la ruta -->
       <div>
         <h2>Mantén tu unidad trabajando, sin sorpresas</h2>
         <p>Diagnóstico claro, citas confirmadas y atención experta en <strong>clutch, frenos y aire</strong> para transporte pesado y ligero.</p>
@@ -181,10 +172,10 @@
 
   <main class="wrap grid">
     <section>
-      <!-- DIAGNÓSTICO (sin datos del cliente) -->
+      <!-- DIAGNÓSTICO SIMPLE (predeterminado) -->
       <article id="route-diagnostico" class="card reveal" aria-labelledby="tit-dx">
-        <h2 id="tit-dx">Diagnóstico con IA: posibles fallas según tu síntoma</h2>
-        <p class="intro">Describe el <strong>síntoma</strong> y algunos <strong>detalles</strong>. Te sugeriremos el servicio probable, causa, tiempo y rango de costo. *No sustituye la inspección física.*</p>
+        <h2 id="tit-dx">Diagnóstico rápido según tu síntoma</h2>
+        <p class="intro">Selecciona tu <strong>síntoma</strong>, el <strong>tipo de unidad</strong> y el <strong>año</strong>. Te mostraremos posibles causas y el servicio sugerido. <em>Este resultado es orientativo: lo ideal es llevar la unidad a revisión.</em></p>
         <div class="body">
           <form id="form-dx" autocomplete="on">
             <div class="row">
@@ -214,15 +205,9 @@
                 <input id="year" name="year" type="number" min="1980" max="2099" placeholder="2018" required />
               </div>
             </div>
-            <div class="row">
-              <div class="field">
-                <label for="details">Detalles (opcional)</label>
-                <textarea id="details" name="details" maxlength="600" placeholder="Ej.: el ruido aparece a baja velocidad, el pedal se hunde, etc."></textarea>
-              </div>
-            </div>
             <div class="actions">
               <button class="btn" type="submit">Generar diagnóstico</button>
-              <button class="btn ghost" type="reset">Limpiar</button>
+              <button class="btn ghost" type="reset" id="dxClear">Limpiar</button>
             </div>
           </form>
           <div id="dx-result" class="result hidden" aria-live="polite"></div>
@@ -232,7 +217,7 @@
       <!-- AGENDAR -->
       <article id="route-agendar" class="card reveal hidden" aria-labelledby="tit-ag">
         <h2 id="tit-ag">Agenda tu cita: elegimos fecha y hora</h2>
-        <p class="intro">Elige el <strong>serivcio</strong> y confirma la <strong>fecha y hora</strong>. Si necesitas ayuda, vuelve a Diagnóstico o escríbenos por WhatsApp.</p>
+        <p class="intro">Elige el <strong>servicio</strong> y confirma la <strong>fecha y hora</strong>. Si necesitas ayuda, vuelve a Diagnóstico o escríbenos por WhatsApp.</p>
         <div class="body">
           <form id="form-ag" autocomplete="on">
             <div class="row">
@@ -285,47 +270,59 @@
         </div>
       </article>
 
-      <!-- PREGUNTAS FRECUENTES -->
+      <!-- PREGUNTAS FRECUENTES (pre-cargadas) -->
       <article id="route-faq" class="card reveal hidden" aria-labelledby="tit-fq">
         <h2 id="tit-fq">Centro de ayuda y preguntas frecuentes</h2>
-        <p class="intro">Busca con palabras clave como <em>balatas</em>, <em>pedal</em>, <em>presión de aire</em>. Si no encuentras tu duda, contáctanos por WhatsApp.</p>
+        <p class="intro">Selecciona un servicio y revisa las dudas más comunes. Información rápida, sin necesidad de escribir.</p>
         <div class="body">
-          <div class="row">
-            <div class="field"><input id="faqQuery" placeholder="Ej.: ¿cada cuándo cambio balatas?" /></div>
-            <div class="actions"><button class="btn" id="faqSearch">Buscar</button></div>
-          </div>
-          <div id="faqResults" class="result hidden"></div>
+          <details open>
+            <summary>Frenos (revisión y balatas)</summary>
+            <ul>
+              <li><strong>¿Cada cuándo cambio balatas?</strong> <br><span class="muted">En pesado: 20,000–40,000 km según carga y ruta. Confirmar con inspección visual.</span></li>
+              <li><strong>Escucho rechinido al frenar.</strong> <br><span class="muted">Puede ser desgaste de balatas, suciedad o rotor/tambor rayado. Recomendamos revisión.</span></li>
+              <li><strong>El volante vibra al frenar.</strong> <br><span class="muted">Posible alabeo de discos/tambores o bujes flojos. Rectificado/ajuste.</span></li>
+            </ul>
+          </details>
+          <details>
+            <summary>Clutch</summary>
+            <ul>
+              <li><strong>¿El clutch patina, qué puede ser?</strong> <br><span class="muted">Desgaste de disco/placa, contaminación de aceite o presión insuficiente.</span></li>
+              <li><strong>Dificultad para meter velocidades.</strong> <br><span class="muted">Ajuste de varillaje, desgaste de embrague o hidráulico con aire/fuga.</span></li>
+              <li><strong>¿Rectifican volante y plato?</strong> <br><span class="muted">Sí, contamos con maquinaria para rectificado y pruebas.</span></li>
+            </ul>
+          </details>
+          <details>
+            <summary>Sistema de aire</summary>
+            <ul>
+              <li><strong>Pierde presión de aire.</strong> <br><span class="muted">Fuga en líneas/válvulas, compresor débil o secador saturado.</span></li>
+              <li><strong>¿Cada cuándo dar mantenimiento al sistema?</strong> <br><span class="muted">Revisión cada 6 meses o 40,000 km; cambiar filtros/secador según uso.</span></li>
+              <li><strong>Luz de advertencia de aire.</strong> <br><span class="muted">No circular si la presión cae bajo especificación. Llevar a diagnóstico.</span></li>
+            </ul>
+          </details>
         </div>
       </article>
 
-      <!-- SOBRE NOSOTROS -->
+      <!-- SOBRE NOSOTROS + MAPA -->
       <article id="route-nosotros" class="card reveal hidden" aria-labelledby="tit-nos">
         <h2 id="tit-nos">Sobre LAGGER: experiencia que da confianza</h2>
         <p class="intro">Especialistas en <strong>clutch, frenos y sistemas de aire</strong> para transporte pesado y ligero. Comunicación clara, procesos documentados y <strong>garantía escrita</strong>.</p>
         <div class="body">
           <div class="row">
             <div class="field">
-              <label>¿Por qué elegirnos?</label>
-              <ul class="muted" style="margin:0; padding-left:18px; line-height:1.8">
-                <li><strong>Experiencia</strong> en tractos, camiones y autos.</li>
-                <li><strong>Eficiencia</strong> y puntualidad para reducir tiempos fuera de ruta.</li>
-                <li><strong>Refacciones confiables</strong> y procesos trazables.</li>
-                <li><strong>Mantenimiento preventivo</strong> por kilometraje.</li>
-              </ul>
-            </div>
-            <div class="field">
-              <label>Capacidades & maquinaria</label>
-              <ul class="muted" style="margin:0; padding-left:18px; line-height:1.8">
-                <li>Rectificado de volantes y platos de clutch.</li>
-                <li>Rectificado de discos y tambores (tractocamión).</li>
-                <li>Pruebas y diagnóstico de sistema de aire.</li>
-              </ul>
+              <label>Ubicación y contacto</label>
+              <p class="muted" style="margin:.2rem 0 0">
+                <strong>Av. Estado de México #164</strong>, Col. Bello Horizonte, C.P. 54948, <strong>Tultitlán, Edomex</strong><br>
+                Tel: <strong>55 7515 4446</strong> · <strong>55 7312 6969</strong><br>
+                Sitio: <strong>cyf-lagger.com.mx</strong> · Correo: <strong>ventas@cyf-lagger.com.mx</strong>
+              </p>
             </div>
           </div>
           <div class="row">
-            <div class="field">
-              <label>Contacto</label>
-              <p class="muted" style="margin:.2rem 0 0"><strong>Av. Estado de México #164</strong>, Col. Bello Horizonte, C.P. 54948, <strong>Tultitlán, Edomex</strong><br>Tel: <strong>55 7515 4446</strong> · <strong>55 7312 6969</strong><br>Sitio: <strong>cyf-lagger.com.mx</strong> · Correo: <strong>ventas@cyf-lagger.com.mx</strong></p>
+            <div class="field" style="flex:1 1 100%">
+              <label>Cómo llegar</label>
+              <iframe class="map" loading="lazy" allowfullscreen
+                src="https://www.google.com/maps?q=Av.+Estado+de+Mexico+164,+Bello+Horizonte,+Tultitlan,+Estado+de+Mexico&output=embed">
+              </iframe>
             </div>
           </div>
           <div class="gallery" aria-label="Galería">
@@ -336,25 +333,6 @@
         </div>
       </article>
     </section>
-
-    <!-- Columna lateral -->
-    <aside>
-      <div class="card reveal">
-        <h2 style="padding-bottom:0">Resumen</h2>
-        <div class="body">
-          <div class="muted">Tu sesión</div>
-          <ul id="summary" class="muted" style="line-height:1.8; list-style:none; padding-left:0">
-            <li><strong>Lead:</strong> <span id="s-lead">—</span></li>
-            <li><strong>Servicio sugerido:</strong> <span id="s-service">—</span></li>
-            <li><strong>Fecha/Hora:</strong> <span id="s-dt">—</span></li>
-          </ul>
-          <div class="actions">
-            <button class="btn" id="go-agendar">Agendar ahora</button>
-            <button class="btn ghost" id="go-dx">Nuevo diagnóstico</button>
-          </div>
-        </div>
-      </div>
-    </aside>
   </main>
 
   <!-- WhatsApp FAB -->
@@ -372,16 +350,10 @@
   </footer>
 
   <script>
-    const API = "https://script.google.com/macros/s/AKfycbwY3iZBAVPqxucaPnj3qI2q8vj61fxkiifcDwQj3NAEI1KKwdhQiriSfMRsUBe4S081OQ/exec";
     const $ = s=>document.querySelector(s); const $$ = s=>[...document.querySelectorAll(s)];
     function toast(msg){ const el=$('#toast'); el.textContent=msg; el.style.display='block'; el.classList.add('show'); setTimeout(()=>{el.classList.remove('show'); el.style.display='none';},2200) }
 
-    const qs = new URLSearchParams(location.search);
-    const UTM = { utm_source: qs.get('utm_source')||'', utm_campaign: qs.get('utm_campaign')||'' };
-    const state = { lead: qs.get('lead')||localStorage.getItem('lead')||'', serviceSuggested:'', appointment:{date:'',time:'',service:''} };
-    function updateSummary(){ $('#s-lead').textContent = state.lead||'—'; $('#s-service').textContent = state.serviceSuggested||'—'; $('#s-dt').textContent = (state.appointment.date&&state.appointment.time)?`${state.appointment.date} ${state.appointment.time}`:'—'; }
-
-    /* HERO VARIANTES (5) */
+    /* HERO VARIANTES */
     const heroVariants = {
       home: {
         title: 'Mantén tu unidad trabajando, sin sorpresas',
@@ -391,8 +363,8 @@
         buttons: [{id:'ctaDx', label:'Diagnóstico rápido', kind:'solid'}, {id:'ctaAg', label:'Agendar cita', kind:'ghost'}]
       },
       '#/diagnostico': {
-        title: 'Diagnóstico inmediato según el síntoma',
-        text: 'Indica el síntoma y obtén posibles fallas, causa probable, tiempo estimado y rango de costo.',
+        title: 'Diagnóstico rápido según el síntoma',
+        text: 'Selecciona síntoma, tipo de unidad y año. Mostramos causas y servicio sugerido (orientativo).',
         kpis: true,
         img: 'https://drive.google.com/uc?export=view&id=1t6xiJtCjua_H-5DRxCKaHHAH006uCJVo',
         buttons: [{id:'ctaDx', label:'Ir a Diagnóstico', kind:'solid'}, {id:'ctaAg', label:'Agendar cita', kind:'ghost'}]
@@ -402,11 +374,11 @@
         text: 'Elige servicio, fecha y hora. Te confirmamos por WhatsApp y correo.',
         kpis: false,
         img: 'https://drive.google.com/uc?export=view&id=1t6xiJtCjua_H-5DRxCKaHHAH006uCJVo',
-        buttons: [{id:'ctaAg', label:'Agendar ahora', kind:'solid'}, {id:'ctaDx', label:'Necesito diagnóstico', kind:'ghost'}]
+        buttons: [{id:'ctaAg', label:'Agendar ahora', kind:'solid'}, {id:'ctaDx', label:'Volver a diagnóstico', kind:'ghost'}]
       },
       '#/faq': {
         title: 'Centro de ayuda y preguntas frecuentes',
-        text: 'Encuentra respuestas usando palabras clave como <em>balatas</em>, <em>pedal</em> o <em>presión de aire</em>.',
+        text: 'Listas pre-cargadas por servicio para resolver tus dudas rápido.',
         kpis: false,
         img: 'https://drive.google.com/uc?export=view&id=1t6xiJtCjua_H-5DRxCKaHHAH006uCJVo',
         buttons: [{id:'ctaDx', label:'Ir a Diagnóstico', kind:'solid'}, {id:'ctaAg', label:'Agendar', kind:'ghost'}]
@@ -439,7 +411,7 @@
         </div>
         <div class="hero-ill"><img src="${v.img}" alt="LAGGER — clutch, frenos y aire"></div>
       `;
-      // Re-wire hero buttons
+      // re-wire hero buttons
       $('#ctaDx')?.addEventListener('click',()=>setRoute('#/diagnostico'));
       $('#ctaAg')?.addEventListener('click',()=>setRoute('#/agendar'));
     }
@@ -463,58 +435,96 @@
     $('#ctaDx')?.addEventListener('click',()=>setRoute('#/diagnostico'));
     $('#ctaAg')?.addEventListener('click',()=>setRoute('#/agendar'));
 
-    // Prefill servicio por query
-    if(qs.get('service')){ $('#service').value = qs.get('service'); state.serviceSuggested = qs.get('service'); }
+    /* ===== Diagnóstico estático (sin API) ===== */
+    const BASE_DIAG = {
+      "Ruido al frenar": {
+        servicio:"Revisión de frenos",
+        causas:["Balatas desgastadas o cristalizadas","Discos/tambores rayados","Polvo o cuerpos extraños"],
+        tiempo:[1,2], costo:[1200,3200]
+      },
+      "Vibración al frenar": {
+        servicio:"Rectificado/ajuste de frenos",
+        causas:["Discos/tambores alabeados","Bujes flojos o desbalanceo","Pernos de mordaza con juego"],
+        tiempo:[1,3], costo:[1500,4200]
+      },
+      "Pedal esponjoso": {
+        servicio:"Purgado y revisión hidráulica",
+        causas:["Aire en el sistema","Fuga de líquido","Bomba o cilindro con desgaste"],
+        tiempo:[1,2], costo:[1100,2600]
+      },
+      "Pierde presión de aire": {
+        servicio:"Diagnóstico de sistema de aire",
+        causas:["Fugas en líneas o válvulas","Secador saturado","Compresor débil"],
+        tiempo:[1,3], costo:[1600,4500]
+      },
+      "Patina el clutch": {
+        servicio:"Revisión de clutch",
+        causas:["Disco/placa desgastados","Contaminación por aceite","Ajuste incorrecto"],
+        tiempo:[2,5], costo:[2500,7800]
+      },
+      "Dificultad para meter velocidades": {
+        servicio:"Ajuste y diagnóstico de embrague/transmisión",
+        causas:["Ajuste de varillaje","Desgaste de embrague","Problema hidráulico"],
+        tiempo:[2,4], costo:[2200,6500]
+      }
+    };
+    // Multiplicadores por tipo de unidad
+    const UNIT_MULT = { "Tráiler":1.8, "Camión":1.4, "Auto":1.0 };
 
-    // Form Diagnóstico (sin pedir datos del cliente)
-    $('#form-dx').addEventListener('submit', async (e)=>{
+    function fmtMoney(n){ return n.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}) }
+
+    $('#form-dx').addEventListener('submit',(e)=>{
       e.preventDefault();
-      const payload={
-        symptom:$('#symptom').value,
-        unitType:$('#unitType').value,
-        year:$('#year').value,
-        details:($('#details').value||'').slice(0,600),
-        lead: state.lead,
-        ...UTM
-      };
-      if(!payload.symptom||!payload.unitType||!payload.year){ toast('Selecciona síntoma, tipo de unidad y año.'); return; }
-      const btn = $('#form-dx button[type="submit"]'); btn.disabled=true; btn.textContent='Procesando…';
-      try{
-        const res = await fetch(API + "?route=diagnose",{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-        const j=await res.json();
-        state.serviceSuggested = j.servicio_sugerido || 'Revisión general';
-        const $r=$('#dx-result');
-        $r.innerHTML = `<div class="row" style="justify-content:space-between; align-items:center">
+      const symptom=$('#symptom').value, unitType=$('#unitType').value, year=parseInt($('#year').value||'0',10);
+      if(!symptom||!unitType||!year){ toast('Selecciona síntoma, tipo de unidad y año.'); return; }
+
+      const base = BASE_DIAG[symptom];
+      const mult = UNIT_MULT[unitType] || 1.0;
+      // Costos y tiempo ajustados por tipo de unidad (y ligera variación por antigüedad)
+      const age = Math.max(0, new Date().getFullYear() - year);
+      const ageBoost = age>15 ? 1.15 : 1.0;
+
+      const tmin = Math.round(base.tiempo[0]*mult);
+      const tmax = Math.round(base.tiempo[1]*mult + (age>20?1:0));
+      const cmin = Math.round(base.costo[0]*mult*ageBoost);
+      const cmax = Math.round(base.costo[1]*mult*ageBoost);
+
+      const confianza = symptom==="Pierde presión de aire" ? .75 : .65;
+
+      const $r=$('#dx-result');
+      $r.innerHTML = `
+        <div class="row" style="justify-content:space-between; align-items:center">
           <div>
-            <div class="status ${j.confianza>=0.66?'ok':(j.confianza>=0.33?'warn':'err')}">Confianza: ${(j.confianza*100||70).toFixed(0)}%</div>
-            <h3 style="margin:8px 0 6px">${j.servicio_sugerido || 'Servicio sugerido'}</h3>
-            <p class="muted">Causa probable: <strong>${j.probable_causa || 'Por confirmar en taller'}</strong></p>
-            <p class="muted">Tiempo estimado: ${j.tiempo_est_min||1}–${j.tiempo_est_max||2} h · Costo estimado: $${j.costo_est_min||1500}–$${j.costo_est_max||3500} MXN</p>
+            <div class="status ${confianza>=0.66?'ok':(confianza>=0.33?'warn':'err')}">Confianza: ${(confianza*100).toFixed(0)}%</div>
+            <h3 style="margin:8px 0 6px">${base.servicio}</h3>
+            <p class="muted"><strong>Tipo de unidad:</strong> ${unitType} · <strong>Año:</strong> ${year}</p>
+            <p class="muted"><strong>Posibles causas:</strong> ${base.causas.join(' · ')}</p>
+            <p class="muted"><strong>Tiempo estimado:</strong> ${tmin}–${tmax} h · <strong>Costo orientativo:</strong> ${fmtMoney(cmin)}–${fmtMoney(cmax)}</p>
+            <p class="muted"><em>Este diagnóstico es una guía inicial. Para tu seguridad y un presupuesto exacto, te recomendamos llevar la unidad a revisión.</em></p>
           </div>
           <div class="actions"><button class="btn alt" id="agendarFromDx">Agendar</button></div>
         </div>`;
-        $r.classList.remove('hidden');
-        // Precargar servicio en Agendar
-        $('#service').value = state.serviceSuggested; updateSummary();
-        $('#agendarFromDx')?.addEventListener('click',()=>setRoute('#/agendar'));
-        toast('Diagnóstico generado.');
-      }catch(err){ console.error(err); toast('No se pudo generar el diagnóstico.'); }
-      finally{ btn.disabled=false; btn.textContent='Generar diagnóstico'; }
+      $r.classList.remove('hidden');
+      $('#service').value = base.servicio; // precargar servicio en Agendar
+      $('#agendarFromDx')?.addEventListener('click',()=>setRoute('#/agendar'));
+      toast('Diagnóstico generado.');
     });
 
-    // Form Agendar (con datos adicionales)
+    $('#dxClear')?.addEventListener('click',()=>{ $('#dx-result').classList.add('hidden'); $('#dx-result').innerHTML=''; });
+
+    /* ===== Agendar (mantengo el flujo sin resumen lateral) ===== */
+    const API = "https://script.google.com/macros/s/AKfycbwY3iZBAVPqxucaPnj3qI2q8vj61fxkiifcDwQj3NAEI1KKwdhQiriSfMRsUBe4S081OQ/exec";
+
     $('#form-ag').addEventListener('submit', async (e)=>{
       e.preventDefault();
       const payload={
-        lead_id:state.lead,
         name: $('#clientName').value,
         unitBrand: $('#unitBrand').value,
         unitModel: $('#unitModel').value,
         unitYear: $('#unitYear').value,
         service: $('#service').value,
         date: $('#date').value,
-        time: $('#time').value,
-        ...UTM
+        time: $('#time').value
       };
       if(!payload.name || !payload.service || !payload.date || !payload.time){
         toast('Completa nombre, servicio, fecha y hora.'); return;
@@ -523,14 +533,14 @@
       try{
         const res=await fetch(API + "?route=createBooking",{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
         const j=await res.json();
-        const $r=$('#ag-result'); state.appointment={date:payload.date, time:payload.time, service:payload.service};
-        $r.innerHTML=`<div class="status ok">Cita confirmada</div>
-          <p class="muted">Evento: <strong>${j.eventId || '(pendiente)'}</strong></p>
+        const $r=$('#ag-result');
+        $r.innerHTML=`<div class="status ok">Cita registrada</div>
+          <p class="muted">ID: <strong>${j.eventId || '(pendiente)'}</strong></p>
           <p class="muted">${payload.date} ${payload.time} · Ubicación: Av. Estado de México #164, Bello Horizonte, Tultitlán, Edomex</p>
           <div class="actions"><button class="btn ghost" id="copyTicket">Copiar resumen</button></div>`;
-        $r.classList.remove('hidden'); updateSummary();
+        $r.classList.remove('hidden');
         $('#copyTicket')?.addEventListener('click',()=>{ 
-          const txt=`Cita LAGGER — ${payload.service} | ${payload.date} ${payload.time} | ${payload.name} | ${payload.unitBrand||''} ${payload.unitModel||''} ${payload.unitYear||''} | Av. Estado de México #164, Bello Horizonte, Tultitlán, Edomex`;
+          const txt=`Cita LAGGER — ${payload.service} | ${payload.date} ${payload.time} | ${payload.name} | ${payload.unitBrand||''} ${payload.unitModel||''} ${payload.unitYear||''} | Av. Estado de México #164, Tultitlán, Edomex`;
           navigator.clipboard.writeText(txt); toast('Copiado ✅'); 
         });
         toast('Cita creada con éxito.');
@@ -538,25 +548,8 @@
       finally{ btn.disabled=false; btn.textContent='Confirmar cita'; }
     });
 
-    // Accesos rápidos
-    $('#go-agendar')?.addEventListener('click',()=>setRoute('#/agendar'));
-    $('#go-dx')?.addEventListener('click',()=>setRoute('#/diagnostico'));
+    // Navegación rápida
     $('#btnToDx')?.addEventListener('click',()=>setRoute('#/diagnostico'));
-
-    // FAQ (mock)
-    $('#faqSearch').addEventListener('click', async ()=>{ 
-      const q=($('#faqQuery').value||'').trim(); 
-      const box=$('#faqResults'); 
-      if(!q){ box.classList.add('hidden'); toast('Escribe tu duda.'); return; }
-      try{
-        const answers=[
-          {q:'¿Cada cuándo cambio balatas?', a:'En transporte pesado suele recomendarse cada 20,000–40,000 km según uso y carga. Validar con inspección visual.'},
-          {q:'¿Qué hago si el pedal está esponjoso?', a:'Puede ser aire en el sistema o fuga de líquido. Evita circular y agenda revisión.'}
-        ];
-        box.innerHTML=`<ul>${answers.map(x=>`<li style="margin:8px 0"><strong>${x.q}:</strong> <span class="muted">${x.a}</span></li>`).join('')}</ul>`;
-        box.classList.remove('hidden');
-      }catch(err){ console.error(err); toast('No se pudo buscar en FAQ.'); }
-    });
 
     // Scroll reveal
     const io = new IntersectionObserver((es)=> es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } }), {threshold:.12});
@@ -564,11 +557,11 @@
 
     // Init
     window.addEventListener('DOMContentLoaded',()=>{
-      renderHero('home'); // HERO inicial (home)
+      renderHero('home');
       setRoute(location.hash||'#/diagnostico'); 
-      updateSummary();
     });
   </script>
 </body>
-
 </html>
+
+
